@@ -52,7 +52,6 @@ public class PulseService {
                     .build();
             var response = httpClient.send(request, HttpResponse.BodyHandlers.discarding());
             statusCode = response.statusCode();
-            System.out.println("HERE IS STATUS CODE::::" + statusCode);
             target.setStatus(statusCode < 300 ? "UP ✅" : "ISSUE ⚠️");
         } catch (Exception e) {
             target.setStatus("DOWN ❌");

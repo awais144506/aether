@@ -17,7 +17,7 @@
 ## 🛠️ The Tech Stack
 
 *   **Language:** Java 21+
-*   **Framework:** Spring Boot 3.x / 4.x (Spring Data JPA, Web, Validation, Actuator)
+*   **Framework:** Spring Boot 4.x (Spring Data JPA, Web, Validation, Actuator)
 *   **Database:** PostgreSQL + TimescaleDB (Running in Docker)
 *   **Concurrency:** Structured Concurrency via `VirtualThreadPerTaskExecutor`
 *   **Security:** AES/GCM 256-bit Encryption
@@ -31,7 +31,7 @@
 The system uses **B-Tree Indexing** for metadata lookups, reducing search time from linear $O(n)$ to logarithmic $O(\log n)$. For time-series logs, we use **Composite Primary Keys** `(UUID + Timestamp)` to ensure data is physically stored in chunks that align with time-range queries.
 
 ### 2. The Clock Cycle
-The system operates on a deterministic clock pulse using `@Scheduled(fixedDelay = 60000)`. This mimics the hardware clock cycles discussed in Charles Petzold's *Code*, providing a reliable interval for the "State Machine" to refresh the status of all monitored nodes.
+The system operates on a deterministic clock pulse using `@Scheduled(fixedDelay = 30000)`. This mimics the hardware clock cycles discussed in Charles Petzold's *Code*, providing a reliable interval for the "State Machine" to refresh the status of all monitored nodes.
 
 ---
 
@@ -44,21 +44,25 @@ docker run -d --name aether -p 5438:5432 \
   -e POSTGRES_USER=admin \
   -e POSTGRES_PASSWORD=pak123 \
   timescale/timescaledb:latest-pg18
+```
 
-2. Initialize Hypertable
+### 2. Initialize Hypertable
 Connect to the database and run the scaling command to optimize the log table:
 
 SQL
+``` bash
 SELECT create_hypertable('ping_logs', 'timestamp');
-3. Application Setup
+```
+### 3. Application Setup
 Configure your application.properties:
-
 Properties
+```bash
 spring.datasource.url=jdbc:postgresql://localhost:5438/postgres
-spring.datasource.username=admin
-spring.datasource.password=pak123
+spring.datasource.username=user
+spring.datasource.password=yourpassword
 spring.jpa.hibernate.ddl-auto=update
-📈 Roadmap (The Modular Future)
+```
+### 📈 Roadmap (The Modular Future)
 [ ] Regional Agents: Deploy Spring Boot agents in London and New York to check latency from different global points.
 
 [ ] Real-time Dashboard: Connect the Next.js frontend to visualize latency fluctuations.
