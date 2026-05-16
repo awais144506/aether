@@ -1,6 +1,8 @@
 package com.ocp.aether.master;
 
 import com.ocp.aether.model.Monitor;
+import com.ocp.aether.repository.MonitorRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,9 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class MasterRegistry {
     private final Map<UUID, Monitor> monitorMap = new ConcurrentHashMap<>();
-
     public void hydrate(List<Monitor> monitors) {
         monitors.forEach(m -> monitorMap.put(UUID.fromString(m.getId()), m));
     }
@@ -25,4 +27,5 @@ public class MasterRegistry {
     public Monitor getMonitorById(UUID id) {
         return monitorMap.get(id);
     }
+
 }

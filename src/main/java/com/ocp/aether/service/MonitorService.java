@@ -16,25 +16,21 @@ public class MonitorService {
 
     private final SecurityService securityService;
     private final MonitorRepository monitorRepository;
-    private final MasterRegistry masterRegistry; // <--- Add this
+    private final MasterRegistry masterRegistry;
     private final MasterNeuralService neuralService;
 
     public Monitor addUrl(MonitorRequest request) throws Exception {
         Monitor monitor = new Monitor();
         monitor.setSiteName(request.getSiteName());
         monitor.setUrl(request.getUrl());
-        monitor.setRegion(request.getRegion()); // <--- Ensure region is set!
-
-        String encrypted = securityService.encrypt(request.getEncryptedToken());
-        monitor.setEncryptedToken(encrypted);
+        monitor.setRegion(request.getRegion());
+        if (Boolean.parseBoolean(request.getEncryptedToken())) {
+            String encrypted = securityService.encrypt(request.getEncryptedToken());
+            monitor.setEncryptedToken(encrypted);
+        }
         Monitor saved = monitorRepository.save(monitor);
-
-        // 2. Update the "Working Memory" (RAM)
         masterRegistry.hydrate(List.of(saved));
-
-        // 3. THE DELTA PUSH: Tell the Agent about the new mission immediately
         neuralService.pushNewMissionToRegion(saved);
-
         return saved;
     }
 

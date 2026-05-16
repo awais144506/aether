@@ -5,6 +5,7 @@ import com.ocp.aether.grpc.MissionPacket;
 import com.ocp.aether.grpc.PulseResult;
 import com.ocp.aether.master.MasterRegistry;
 import com.ocp.aether.model.Monitor;
+import com.ocp.aether.utility.LogBroadcaster;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -18,6 +19,7 @@ public class MasterNeuralService extends AetherNeuralLinkGrpc.AetherNeuralLinkIm
 
     private final MasterRegistry registry;
     private final PulseService pulseService;
+    private final LogBroadcaster logBroadcaster;
     private final Map<String, StreamObserver<MissionPacket>> activeAgentStreams = new ConcurrentHashMap<>();
 
     @Override
@@ -35,6 +37,12 @@ public class MasterNeuralService extends AetherNeuralLinkGrpc.AetherNeuralLinkIm
                     pushMissionToAgent(responseObserver, result.getRegion());
                 } else {
                     pulseService.recordPulseFromAgent(
+                            result.getMonitorId(),
+                            result.getStatusCode(),
+                            result.getLatencyMs(),
+                            result.getRegion()
+                    );
+                    logBroadcaster.broadcast(
                             result.getMonitorId(),
                             result.getStatusCode(),
                             result.getLatencyMs(),

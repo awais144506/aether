@@ -25,6 +25,11 @@
 
 ---
 
+## 🔗 Repository Ecosystem & API Reference
+
+* **Frontend Dashboard UI**: The real-time user interface layer for viewing global metrics and stream visualization can be found at the [Aether Frontend Repository](https://github.com/awais144506/aether-frontend).
+* **API Specification Reference**: Detailed documentation covering request/response payloads, endpoint schemas, and server-sent telemetry stream channels is available locally at [docs/API_Specification.md](docs/API_Specification.md).
+
 ## 🏗️ Architecture & CS Principles
 
 ### 1. Data Locality & Search Efficiency
@@ -57,10 +62,14 @@ SELECT create_hypertable('ping_logs', 'timestamp');
 Configure your application.properties:
 Properties
 ```bash
+spring.application.name=aether
 spring.datasource.url=jdbc:postgresql://localhost:5438/postgres
-spring.datasource.username=user
-spring.datasource.password=yourpassword
+spring.datasource.username=admin
+spring.datasource.password=password
 spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+server.port=4000
+grpc.server.port=9001
 ```
 ### 📈 Roadmap (The Modular Future)
 [ ] Regional Agents: Deploy Spring Boot agents in London and New York to check latency from different global points.
